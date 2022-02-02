@@ -5,13 +5,15 @@ tmpjs=$(mktemp)
 path=$(pwd)
 repo_path=$1
 template_files=${repo_path}/app/static/assets/js/
-stop_script="./stop.sh"
+stop_script="./run.sh"
 run_script="./run.sh"
 test -d ${repo_path} || { echo "Directory ${repo_path} not found, aborting..."; exit 1; } 
 test -f ofuscator.js || { echo "ofuscator.js file not found, aborting..."; exit 1; }
 echo "INFO: Updating Repo...."
 cd ${repo_path}
-test -f ${repo_path}/${stop_script} && ${repo_path}/${stop_script} &>> ${path}/auto_pull
+test -f ${repo_path}/${stop_script} && {
+  ${repo_path}/${stop_script} -s
+}
 echo "-----UPDATING-REPO-----" | tee ${path}/auto_pull
 git pull &>> $tmp
 test $(grep -Eic "error|fatal|unable" $tmp) -gt 0 && { 
@@ -31,5 +33,7 @@ rm -f $tmp $tmpjs
 cd ${repo_path}
 echo "Cleaning js blueprints..." | tee -a ${path}/auto_pull
 rm ${template_files}*
-test -f ${run_script} && ${run_script} &>> ${path}/auto_pull
+test -f ${run_script} && {
+  ${run_script} -r 
+}
 echo "Website running..." | tee -a ${path}/auto_pull
