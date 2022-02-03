@@ -1,5 +1,8 @@
 #! /bin/bash
 
+CWD=$(dirname $(readlink -f $0))
+cd ${CWD}
+
 tmp=$(mktemp)
 tmpjs=$(mktemp)
 path=$(pwd)
